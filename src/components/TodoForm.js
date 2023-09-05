@@ -41,6 +41,7 @@ function TodoForm(props) {
         </>
       ) : (
         <>
+          <h1>What's the Plan for Today?</h1>
           <input
             placeholder="Add a todo"
             value={input}

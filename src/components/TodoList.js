@@ -5,12 +5,23 @@ import Todo from "./Todo";
 function TodoList() {
   const [todos, setTodos] = useState([]);
 
+  // Load todos from localStorage when the component mounts
+  useEffect(() => {
+    const storedTodos = JSON.parse(localStorage.getItem("todos"));
+    if (storedTodos) {
+      setTodos(storedTodos);
+    }
+  }, []);
+
   const addTodo = (todo) => {
     if (!todo.text || /^\s*$/.test(todo.text)) {
       return;
     }
 
     const newTodos = [todo, ...todos];
+
+    // Save todos to localStorage
+    localStorage.setItem("todos", JSON.stringify(newTodos));
 
     setTodos(newTodos);
   };
@@ -20,13 +31,22 @@ function TodoList() {
       return;
     }
 
-    setTodos((prev) =>
-      prev.map((item) => (item.id === todoId ? newValue : item))
+    // Update the todos array with the new value
+    const updatedTodos = todos.map((item) =>
+      item.id === todoId ? { ...item, text: newValue.text } : item
     );
+
+    // Save the updated todos to localStorage
+    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+
+    setTodos(updatedTodos);
   };
 
   const removeTodo = (id) => {
     const removedArr = [...todos].filter((todo) => todo.id !== id);
+
+    // Save todos to localStorage
+    localStorage.setItem("todos", JSON.stringify(removedArr));
 
     setTodos(removedArr);
   };
@@ -38,13 +58,15 @@ function TodoList() {
       }
       return todo;
     });
+
+    // Save todos to localStorage
+    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+
     setTodos(updatedTodos);
   };
 
   return (
     <>
-      <h1>What's the Plan for Today?</h1>
-
       <TodoForm onSubmit={addTodo} />
 
       {todos.length === 0 ? <p>No todo</p> : <p>Todo Count: {todos.length} </p>}
